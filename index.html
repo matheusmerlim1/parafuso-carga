@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Parafuso &amp; Carga</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Verificação e seleção de parafusos, barras roscadas e parafusos de pressão: tração, cisalhamento, separação da junta, fadiga, grupos excêntricos e placa de base.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%94%A9%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/portfolio-btn.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>Parafuso &amp; Carga</h1>
+      <p>Informe o carregamento e veja qual parafuso ou barra roscada atende — tração, cisalhamento, separação da junta, fadiga, grupos com carga excêntrica, placa de base e parafuso de pressão, com o memorial de cálculo completo.</p>
+    </div>
+    <div class="tside">
+      <div class="tblock" aria-label="Relações principais">
+        <div><b>Pré-carga</b>F<sub>i</sub> = 0,75·S<sub>p</sub>·A<sub>t</sub></div>
+        <div><b>Torque</b>T = K·F<sub>i</sub>·d</div>
+        <div><b>Rigidez</b>C = k<sub>b</sub>/(k<sub>b</sub>+k<sub>m</sub>)</div>
+        <div><b>Parafuso</b>F<sub>b</sub> = F<sub>i</sub> + C·P</div>
+      </div>
+      <div class="seg unid" id="unid" role="group" aria-label="Unidade de força">
+        <button type="button" data-v="kN">kN</button><button type="button" data-v="tf">tf</button>
+      </div>
+      <button id="themeBtn" class="theme-btn" type="button" aria-label="Alternar tema claro/escuro"><span id="themeIcon">☀</span> <span id="themeText">Tela clara</span></button>
+    </div>
+  </header>
+
+  <!-- identificação do documento: vai para o cabeçalho e o rodapé dos relatórios -->
+  <section class="ident" aria-label="Identificação do documento">
+    <div class="fld id-proj"><label for="id_proj">Projeto</label><input id="id_proj" placeholder="ex.: Base da bomba B-101"></div>
+    <div class="fld"><label for="id_tag">Tag do documento</label><input id="id_tag" placeholder="ex.: MC-1234-001"></div>
+    <div class="fld id-rev"><label for="id_rev">Revisão</label><input id="id_rev" value="0"></div>
+    <div class="fld"><label for="id_resp">Responsável</label><input id="id_resp" placeholder="nome / CREA"></div>
+    <div class="fld"><label for="id_data">Data</label><input id="id_data" type="date"></div>
+  </section>
+
+  <nav class="gtabs" id="modos" aria-label="Modelo de carregamento">
+    <button class="gbtn" type="button" data-modo="simples">Junta axial</button>
+    <button class="gbtn" type="button" data-modo="chapa">Grupo na chapa</button>
+    <button class="gbtn" type="button" data-modo="poste">Poste na base</button>
+    <button class="gbtn" type="button" data-modo="pressao">Parafuso de pressão</button>
+  </nav>
+
+  <div class="fhead">
+    <p class="crumb" id="mcrumb"></p>
+    <h2 id="mtitulo"></h2>
+    <p id="mdesc"></p>
+  </div>
+
+  <div class="layout">
+    <aside class="form" id="form">
+
+      <!-- elemento -->
+      <section class="card" data-modos="simples chapa poste pressao">
+        <h3 id="el_h">Elemento</h3>
+        <div class="seg" id="tipo" role="group" aria-label="Elemento">
+          <button type="button" data-v="parafuso">Parafuso</button>
+          <button type="button" data-v="barra">Barra roscada</button>
+          <button type="button" data-v="ambos">Comparar os dois</button>
+        </div>
+        <p class="lbl sp">Classes consideradas</p>
+        <div class="toggles" id="classes"></div>
+      </section>
+
+      <!-- carregamento: junta axial -->
+      <section class="card" data-modos="simples">
+        <h3>Carregamento</h3>
+        <div class="fgrid">
+          <div class="fld"><label for="s_n">Nº de parafusos</label><input id="s_n" inputmode="numeric" value="4"></div>
+          <div class="fld"><label for="s_P">Tração total P</label><div class="un"><input id="s_P" inputmode="decimal" value="40"><span class="uF">kN</span></div></div>
+          <div class="fld"><label for="s_V">Cortante total V</label><div class="un"><input id="s_V" inputmode="decimal" value="12"><span class="uF">kN</span></div></div>
+        </div>
+        <p class="help">P separa as chapas (tração no eixo do parafuso); V age no plano de contato. Os parafusos dividem igualmente as duas.</p>
+        <label class="tg"><input type="checkbox" id="s_var"> Carga de tração variável (fadiga)</label>
+        <div class="fgrid" data-se="s_var">
+          <div class="fld"><label for="s_Pmin">Tração mínima do ciclo</label><div class="un"><input id="s_Pmin" inputmode="decimal" value="0"><span class="uF">kN</span></div></div>
+        </div>
+      </section>
+
+      <!-- carregamento: grupo na chapa -->
+      <section class="card" data-modos="chapa">
+        <h3>Grupo de parafusos</h3>
+        <div class="fgrid">
+          <div class="fld"><label for="c_nx">Colunas (x)</label><input id="c_nx" inputmode="numeric" value="2"></div>
+          <div class="fld"><label for="c_ny">Linhas (y)</label><input id="c_ny" inputmode="numeric" value="3"></div>
+          <div class="fld"><label for="c_px">Passo em x</label><div class="un"><input id="c_px" inputmode="decimal" value="80"><span>mm</span></div></div>
+          <div class="fld"><label for="c_py">Passo em y</label><div class="un"><input id="c_py" inputmode="decimal" value="75"><span>mm</span></div></div>
+        </div>
+        <h3 class="sp">Carga na chapa</h3>
+        <div class="fgrid">
+          <div class="fld"><label for="c_Fx">Força F<sub>x</sub></label><div class="un"><input id="c_Fx" inputmode="decimal" value="0"><span class="uF">kN</span></div></div>
+          <div class="fld"><label for="c_Fy">Força F<sub>y</sub></label><div class="un"><input id="c_Fy" inputmode="decimal" value="-25"><span class="uF">kN</span></div></div>
+          <div class="fld"><label for="c_ax">Posição x da carga</label><div class="un"><input id="c_ax" inputmode="decimal" value="250"><span>mm</span></div></div>
+          <div class="fld"><label for="c_ay">Posição y da carga</label><div class="un"><input id="c_ay" inputmode="decimal" value="0"><span>mm</span></div></div>
+        </div>
+        <p class="help">Coordenadas a partir do centroide do grupo; F<sub>y</sub> negativo aponta para baixo. É o suporte em balanço do Shigley §8-12: a carga fora do centroide gera corte primário F/n e secundário M·r/Σr².</p>
+      </section>
+
+      <!-- carregamento: poste -->
+      <section class="card" data-modos="poste">
+        <h3>Chumbadores e placa</h3>
+        <div class="fgrid">
+          <div class="fld"><label for="p_nx">Colunas (na direção de H)</label><input id="p_nx" inputmode="numeric" value="2"></div>
+          <div class="fld"><label for="p_ny">Linhas</label><input id="p_ny" inputmode="numeric" value="2"></div>
+          <div class="fld"><label for="p_px">Passo em x</label><div class="un"><input id="p_px" inputmode="decimal" value="300"><span>mm</span></div></div>
+          <div class="fld"><label for="p_py">Passo em y</label><div class="un"><input id="p_py" inputmode="decimal" value="300"><span>mm</span></div></div>
+          <div class="fld"><label for="p_Lp">Placa L<sub>p</sub> (direção de H)</label><div class="un"><input id="p_Lp" inputmode="decimal" value="400"><span>mm</span></div></div>
+          <div class="fld"><label for="p_Bp">Placa B<sub>p</sub></label><div class="un"><input id="p_Bp" inputmode="decimal" value="400"><span>mm</span></div></div>
+        </div>
+        <h3 class="sp">Carga no poste</h3>
+        <div class="fgrid">
+          <div class="fld"><label for="p_H">Força horizontal H</label><div class="un"><input id="p_H" inputmode="decimal" value="5"><span class="uF">kN</span></div></div>
+          <div class="fld"><label for="p_h">Altura de H</label><div class="un"><input id="p_h" inputmode="decimal" value="3"><span>m</span></div></div>
+          <div class="fld"><label for="p_N">Normal N (+ compressão)</label><div class="un"><input id="p_N" inputmode="decimal" value="4"><span class="uF">kN</span></div></div>
+          <div class="fld"><label for="p_Mt">Torção M<sub>t</sub></label><div class="un"><input id="p_Mt" inputmode="decimal" value="0"><span class="uM">kN·m</span></div></div>
+        </div>
+        <label class="tg"><input type="checkbox" id="p_alivia"> Considerar o alívio da compressão N</label>
+        <label class="tg"><input type="checkbox" id="p_var"> H variável (vento, vibração — fadiga)</label>
+        <div class="fgrid" data-se="p_var">
+          <div class="fld"><label for="p_Hmin">H mínimo do ciclo</label><div class="un"><input id="p_Hmin" inputmode="decimal" value="0"><span class="uF">kN</span></div></div>
+        </div>
+        <p class="help">A placa gira sobre a borda comprimida; cada chumbador recebe F = M·d/Σd², com d medido até essa borda. A ancoragem no concreto não é verificada aqui.</p>
+      </section>
+
+      <!-- junta (comum aos três modelos) -->
+      <section class="card" data-modos="simples chapa poste">
+        <h3>Junta</h3>
+        <div class="fgrid">
+          <div class="fld"><label for="l" id="l_lbl">Comprimento de aperto l</label><div class="un"><input id="l" inputmode="decimal" value="30"><span>mm</span></div></div>
+          <div class="fld"><label for="membro">Material dos membros</label><select id="membro"></select></div>
+          <div class="fld"><label for="t">Chapa mais fina t</label><div class="un"><input id="t" inputmode="decimal" value="12"><span>mm</span></div></div>
+          <div class="fld"><label for="SyM">S<sub>y</sub> da chapa</label><div class="un"><input id="SyM" inputmode="decimal" value="250"><span>MPa</span></div></div>
+          <div class="fld"><label for="planos">Planos de corte</label><select id="planos"><option value="1">1 — corte simples</option><option value="2">2 — corte duplo</option></select></div>
+          <div class="fld" id="rosca_fld"><label for="rosca">No plano de corte</label><select id="rosca"><option value="1">Rosca (At)</option><option value="0">Corpo liso (Ad)</option></select></div>
+        </div>
+      </section>
+
+      <section class="card" data-modos="simples chapa poste">
+        <h3>Aperto e transmissão do corte</h3>
+        <div class="fgrid">
+          <div class="fld"><label for="pre">Pré-carga</label><select id="pre">
+            <option value="0.75">0,75·Fp — reutilizável</option>
+            <option value="0.9">0,90·Fp — permanente</option>
+            <option value="0">Sem pré-carga (encosto)</option></select></div>
+          <div class="fld"><label for="K">Fator de torque K</label><select id="K"></select></div>
+          <div class="fld"><label for="modo">Corte transmitido por</label><select id="modo"><option value="contato">Contato — corte no parafuso</option><option value="atrito">Atrito — sem escorregamento</option></select></div>
+          <div class="fld" id="mu_fld"><label for="mu">Atrito μ</label><input id="mu" inputmode="decimal" value="0,30"></div>
+        </div>
+      </section>
+
+      <!-- parafuso de pressão / nivelamento -->
+      <section class="card" data-modos="pressao">
+        <h3>Carga e apoios</h3>
+        <div class="fgrid">
+          <div class="fld"><label for="z_W">Carga total W</label><div class="un"><input id="z_W" inputmode="decimal" value="20"><span class="uF">kN</span></div></div>
+          <div class="fld"><label for="z_n">Nº de parafusos</label><input id="z_n" inputmode="numeric" value="4"></div>
+          <div class="fld"><label for="z_kd">Fator de desigualdade k<sub>d</sub></label><input id="z_kd" inputmode="decimal" value="1,0"></div>
+        </div>
+        <h3 class="sp">Estrutura em planta</h3>
+        <div class="fgrid">
+          <div class="fld"><label for="z_A">Comprimento A (x)</label><div class="un"><input id="z_A" inputmode="decimal" value="1200"><span>mm</span></div></div>
+          <div class="fld"><label for="z_B">Largura B (y)</label><div class="un"><input id="z_B" inputmode="decimal" value="800"><span>mm</span></div></div>
+          <div class="fld"><label for="z_ex">CG em x</label><div class="un"><input id="z_ex" inputmode="decimal" value="0"><span>mm</span></div></div>
+          <div class="fld"><label for="z_ey">CG em y</label><div class="un"><input id="z_ey" inputmode="decimal" value="0"><span>mm</span></div></div>
+        </div>
+        <p class="help">Os parafusos ficam recuados das bordas: 1 no centro, 2 nas pontas, 3 em triângulo e, a partir de 4, em pares ao longo dos lados maiores. Com o CG fora do centro, cada parafuso recebe W/n mais a parcela do momento (tabela no memorial). O k<sub>d</sub> cobre o desnivelamento: com 4 apoios a estrutura é hiperestática, e sem nivelamento controlado dois parafusos podem levar quase tudo (k<sub>d</sub> = 2).</p>
+        <h3 class="sp">Parafuso e rosca fêmea</h3>
+        <div class="fgrid">
+          <div class="fld"><label for="z_L">Comprimento livre L</label><div class="un"><input id="z_L" inputmode="decimal" value="60"><span>mm</span></div></div>
+          <div class="fld"><label for="z_Kf">Flambagem</label><select id="z_Kf"></select></div>
+          <div class="fld"><label for="z_Le">Rosca engajada L<sub>e</sub></label><div class="un"><input id="z_Le" inputmode="decimal" value="12"><span>mm</span></div></div>
+          <div class="fld"><label for="z_femea">Rosca fêmea</label><select id="z_femea"></select></div>
+          <div class="fld"><label for="z_f">Atrito na rosca f</label><input id="z_f" inputmode="decimal" value="0,15"></div>
+        </div>
+        <h3 class="sp">Ponta e base</h3>
+        <div class="fgrid">
+          <div class="fld"><label for="z_ponta">Contato</label><select id="z_ponta"></select></div>
+          <div class="fld"><label for="z_base">Base</label><select id="z_base"></select></div>
+          <div class="fld" id="z_fc_fld"><label for="z_fc">Atrito na ponta f<sub>c</sub></label><input id="z_fc" inputmode="decimal" value="0,15"></div>
+          <div class="fld" id="z_Ds_fld"><label for="z_Ds">Diâmetro da sapata</label><div class="un"><input id="z_Ds" inputmode="decimal" value="40"><span>mm</span></div></div>
+        </div>
+        <label class="tg"><input type="checkbox" id="z_desg"> Girado com frequência sob carga (desgaste dos filetes)</label>
+        <div class="fgrid" data-se="z_desg">
+          <div class="fld"><label for="z_padm">Pressão admissível</label><div class="un"><input id="z_padm" inputmode="decimal" value="13"><span>MPa</span></div></div>
+        </div>
+        <p class="help">Shigley §8-2: o torque para subir inclui o atrito da rosca e o da ponta girando na base. Aço sobre aço seco f ≈ 0,15 a 0,25; lubrificado, 0,11 a 0,17 (Tab. 8-5).</p>
+      </section>
+
+      <details class="card how">
+        <summary>Como o cálculo é feito</summary>
+        <div id="como"></div>
+      </details>
+    </aside>
+
+    <main class="res">
+      <section class="card anim">
+        <div class="ahead">
+          <h3 id="atitulo">Animação</h3>
+          <div class="actl">
+            <button type="button" class="pbtn" id="play" aria-label="Pausar animação">⏸</button>
+            <input type="range" id="sl" min="0" max="1" step="0.01" value="1" aria-label="Fração da carga aplicada">
+            <output id="slo" data-mr-ignore>100 %</output>
+          </div>
+        </div>
+        <svg id="svg" class="fig" data-mr-ignore viewBox="0 0 600 300" role="img" aria-label="Animação do carregamento"></svg>
+        <div class="legend" id="leg"></div>
+      </section>
+
+      <section class="card" id="recCard">
+        <h3>Mais adequado para este carregamento</h3>
+        <div id="rec"></div>
+        <div id="aviso"></div>
+      </section>
+
+      <section class="card" id="matCard">
+        <div class="ahead">
+          <h3>Todas as combinações</h3>
+          <div class="seg sm" id="mtipo" role="group" aria-label="Elemento na tabela"></div>
+        </div>
+        <p class="help">Cada célula mostra o coeficiente de segurança n da verificação que governa (a mais crítica); n ≥ 1 atende. Clique para ver o memorial.</p>
+        <div class="mxbar">
+          <label class="tg"><input type="checkbox" id="soFreq"> Mostrar só roscas e classes de uso frequente</label>
+          <span class="mxleg"><i class="dot"></i>uso frequente · <b class="star">★</b> menor que atende · <b class="dia">◆</b> melhor opção de uso frequente</span>
+        </div>
+        <div class="twrap" id="matriz"></div>
+      </section>
+
+      <section class="card" id="detCard">
+        <div class="ahead">
+          <div><p class="crumb">Elemento selecionado</p><h3 id="dtitulo"></h3></div>
+          <div class="rbtns"><button type="button" class="print-btn" id="printBtn">🖨 Relatório PDF</button>
+            <button type="button" class="print-btn alt" id="wordBtn">📄 Relatório Word (.docx)</button></div>
+        </div>
+        <p class="rstat" id="rstat" role="status"></p>
+        <div id="checks"></div>
+        <div class="memorial" id="memorial"></div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="foot">
+    <div><strong>Fontes.</strong> BUDYNAS, R. G.; NISBETT, J. K. <em>Elementos de Máquinas de Shigley</em>, 10ª ed. — cap. 8 (parafusos de potência §8-2, juntas pré-carregadas, rigidez de Wileman, fadiga por Goodman, cisalhamento de grupos excêntricos) e §4-11 (flambagem de colunas). NORTON, R. L. <em>Projeto de Máquinas</em>, cap. 15 (espanamento de roscas). Classes: ISO 898-1 (aço) e ISO 3506-1 (inox); roscas: ISO 261/262; porcas: ISO 4032.</div>
+    <div>Não verificado aqui: ancoragem de chumbadores no concreto (arrancamento do cone, fendilhamento — ACI 318 / NBR 6118), rasgamento da borda da chapa, flexão da placa de base, espanamento da rosca em furo roscado e efeitos de temperatura. No parafuso de pressão, o torque vale para rosca métrica de uma entrada e as áreas de espanamento seguem Norton (cap. 15).</div>
+    <div>“Uso frequente” indica roscas e classes correntes no mercado brasileiro (roscas de 1ª escolha da ISO 261; classes mais estocadas para cada elemento). É uma orientação, não um dado de catálogo — confirme a disponibilidade com o fornecedor.</div>
+    <div>Ferramenta de pré-dimensionamento. Não substitui a verificação e a ART de um engenheiro responsável.</div>
+  </footer>
+</div>
+
+<div id="printReport" hidden></div>
+
+<script src="js/dados.js"></script>
+<script src="js/calculo.js"></script>
+<script src="js/memorial.js"></script>
+<script src="js/desenho.js"></script>
+<script src="js/relatorio.js"></script>
+<script src="js/app.js"></script>
+
+<!-- === Botao de volta ao portfolio - cole antes de </body> === -->
+<a id="mr-portfolio-btn" href="https://matheusmerlim1.github.io/" target="_blank" rel="noopener"
+   aria-label="Abrir o portf&oacute;lio de Matheus Raposo" title="Ver todos os meus projetos">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>
+  </svg>
+  <span>Portf&oacute;lio</span>
+</a>
+<script src="js/portfolio-btn.js"></script>
+</body>
+</html>

@@ -284,10 +284,27 @@ table.mx{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
   #printReport .pr-id{margin-top:8pt;max-width:none}
   #printReport .pr-id td:first-child{width:38mm;color:var(--muted)}
   #printReport .pr-fig svg{width:100%;max-height:230pt;border:1pt solid var(--line)}
-  #printReport .msection,#printReport .mstep{break-inside:avoid}
+  /* ---- memorial como documento corrido (como o Cálculo de Içamento): sem caixas, sem fundo.
+     Só o passo não se parte; a seção flui de uma folha para a outra, sem deixar meia folha em branco */
+  #printReport .memorial{display:block}
+  #printReport .msection{display:block;margin:0 0 6mm}
+  #printReport .msection > h4{font:700 12.5pt/1.2 var(--f-display);letter-spacing:.02em;color:#000;
+    border:0;border-bottom:.6pt solid #000;padding:0 0 1.5mm;margin:0 0 3mm;break-after:avoid;page-break-after:avoid}
+  #printReport .mstep{display:block;background:none;border:0;border-radius:0;padding:0;margin:0 0 3.5mm;break-inside:avoid;page-break-inside:avoid}
+  #printReport .mstep .mtitle{font:700 10pt/1.35 var(--f-body);text-transform:none;letter-spacing:0;color:#000;margin:0 0 1mm}
+  #printReport .mstep .mformula,#printReport .mstep .msub,#printReport .mstep .mres{
+    display:block;margin:0 0 0 1mm;padding:0 0 0 3mm;border:0;border-left:.8pt solid #999;font-size:9pt;line-height:1.5;color:#000;white-space:pre-wrap}
+  #printReport .mstep .mformula{color:#444}
+  #printReport .mstep .mres{font-weight:700;padding-top:0;margin-top:0;border-top:0}
+  #printReport .mstep .mnote{font:italic 8.5pt/1.45 var(--f-body);color:#333;padding:1mm 0 0 4mm}
+  /* tabelas: linhas finas, sem grade fechada; o cabeçalho se repete em cada folha */
   #printReport .mtable{font-size:8.5pt}
-  #printReport .mtable th,#printReport .mtable td{padding:2.5pt 4pt}
-  #printReport .mstep .mnote{font-size:8.5pt}
+  #printReport .mtable th,#printReport .mtable td{padding:2.5pt 4pt;border:0;border-bottom:.4pt solid #bbb}
+  #printReport .mtable th{background:none;color:#333;border-bottom:.8pt solid #000}
+  #printReport .mtable thead{display:table-header-group}
+  #printReport .mtable tr{break-inside:avoid;page-break-inside:avoid}
+  /* conclusão: parágrafo, sem caixa tingida */
+  #printReport .mconclusao{background:none;border:0;border-top:.6pt solid #000;border-radius:0;padding:2mm 0 0;margin-top:2mm;font-size:10pt}
   #printReport .pr-leg{font-size:9pt;color:var(--muted);text-align:center;font-style:italic;margin:3pt 0 10pt}
   /* rodapé fixo: o navegador repete elementos position:fixed em todas as páginas impressas */
   #printReport .pr-rod{position:fixed;left:0;right:0;bottom:0;padding-top:3pt;border-top:.5pt solid var(--line);background:#fff;

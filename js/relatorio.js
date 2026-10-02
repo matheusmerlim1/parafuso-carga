@@ -224,3 +224,44 @@ function relatorioPdf(R) {
     <div class="pr-rod">${rotuloDoc(R) ? xmlEscape(rotuloDoc(R)) + ' · ' : ''}Análise gerada em Parafuso &amp; Carga — <a href="${xmlEscape(siteAnalise(R.modo))}">${xmlEscape(siteAnalise(R.modo))}</a></div>`;
   window.print();
 }
+
+/* ---------- SMath Studio (.sm) ----------
+   Mesmo modelo do PDF e do Word. Cada seção do memorial vai para uma área recolhida do
+   SMath com todas as contas; fora da área o resultado é chamado de novo. Detalhes (conta viva
+   x valor, áreas, layout) em js/smath-export.js. */
+function relatorioSmath(R) {
+  const S = window.SMathExport, m = R.m;
+  const doc = new S.Documento({autor: R.resp || '', casas: 3});
+  const mem = new S.Memorial(doc);
+  doc.titulo('Parafuso & Carga — memorial de cálculo', 1);
+  doc.texto(S.limpar(m.titulo), {negrito: true, alinhamento: 'center'});
+  doc.texto(S.limpar(m.subtitulo), {alinhamento: 'center'});
+  doc.titulo('Identificação do documento', 2);
+  doc.texto(identLinhas(R).map(([k, v]) => `${k}: ${S.limpar(v)}`).join('\n'));
+  doc.titulo('A. Variáveis de entrada', 2);
+  m.entradas.forEach(([s, d, v, o]) => mem.dado(s, d, v, o));
+  doc.titulo('B. Constantes e critérios adotados', 2);
+  m.constantes.forEach(([s, d, v, o]) => mem.dado(s, d, v, o));
+  doc.titulo(S.limpar(m.propsTitulo).replace(/^C · /, 'C. '), 2);
+  m.props.forEach(([s, d, v, o]) => mem.dado(s, d, v, o));
+  for (const sec of m.secoes) {
+    mem.secao(`${sec.num}. ${sec.titulo}`, sec.passos, {
+      depois: sec.tabela ? () => mem.tabela(sec.tabela.cab, sec.tabela.linhas) : null
+    });
+  }
+  doc.titulo('D. Resumo das variáveis de saída', 2);
+  m.saidas.forEach(([s, d, v]) => { if (!mem.mostrarSeDefinido(s, d)) doc.texto(`${S.limpar(s)} — ${S.limpar(d)}: ${S.limpar(v)}`); });
+  doc.titulo('Resumo da verificação', 2);
+  mem.tabela(['Verificação', 'Solicitante', 'Resistente', 'n', 'Situação'], m.resumo);
+  if (R.alternativas && R.alternativas.length) {
+    doc.titulo('E. Alternativas avaliadas', 2);
+    mem.tabela(ALT_CAB, R.alternativas);
+  }
+  doc.espaco(9);
+  doc.texto(S.limpar(m.conclusao), {negrito: true, cor: m.ok ? '#256B4D' : '#A1332C'});
+  doc.texto(AVISO, {italico: true});
+  doc.texto(`Análise disponível em: ${siteAnalise(R.modo)}`);
+  S.baixar(nomeArquivo(R, 'sm'), doc);
+  return mem.stats;
+}
+const ALT_CAB = ['Elemento', 'Classe', 'Menor rosca', 'n (governa)', 'Verificação que governa', 'Uso frequente'];

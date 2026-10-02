@@ -403,6 +403,11 @@ $('wordBtn').addEventListener('click', async () => {
   try { await relatorioWord(R); $('rstat').textContent = 'Documento Word baixado.'; }
   catch (err) { $('rstat').textContent = 'Não foi possível gerar o documento.'; }
 });
+$('smathBtn').addEventListener('click', () => {
+  const R = dadosRelatorio(); if (!R) return;
+  try { relatorioSmath(R); $('rstat').textContent = 'Arquivo SMath baixado.'; }
+  catch (err) { console.error(err); $('rstat').textContent = 'Não foi possível gerar o arquivo SMath.'; }
+});
 
 /* tema */
 const themeBtn = $('themeBtn');
